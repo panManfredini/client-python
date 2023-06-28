@@ -11,11 +11,12 @@ from ..logging import get_logger
 import logging
 from urllib.parse import urlencode
 from ..exceptions import AuthError, BadResponse, NoResultsError
+import time
 
 logger = get_logger("RESTClient")
 version = "unknown"
 try:
-    version = pkg_resources.require("polygon-api-client")[0].version
+    version = pkg_resources.require("polygon-api-client-mod")[0].version
 except:
     pass
 
@@ -200,6 +201,10 @@ class BaseClient:
             decoded = self._decode(resp)
             for t in decoded[result_key]:
                 yield deserializer(t)
+            
+            if options is not None:
+                time.sleep(options.throttle_request_sec)
+            
             if "next_url" in decoded:
                 path = decoded["next_url"].replace(self.BASE, "")
                 params = {}

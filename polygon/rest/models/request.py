@@ -13,18 +13,21 @@ class RequestOptionBuilder:
         edge_id: Optional[str] = None,
         edge_ip_address: Optional[str] = None,
         edge_user: Optional[str] = None,
+        throttle_request_per_sec: float = 13
     ):
         """
         RequestOptionBuilder is a utility class to build polygon api options used in requests.
         :param edge_id: is a required Launchpad header. It identifies the Edge User requesting data
         :param edge_ip_address: is a required Launchpad header. It denotes the originating IP Address of the Edge User
         :param edge_user: is an optional Launchpad header. It denotes the originating UserAgent of the Edge User requesting data.
+        :param throttle_request_per_sec: make sure we can make requests that are within 5 cals per minute
         """
         self.headers: Optional[Dict[str, str]] = None
         if edge_id is not None and edge_ip_address is not None:
             self.edge_headers(
                 edge_id=edge_id, edge_ip_address=edge_ip_address, edge_user=edge_user
             )
+        self.throttle_request_sec = throttle_request_per_sec
 
     def edge_headers(
         self,
